@@ -13,14 +13,19 @@ Route::middleware(['auth:sanctum', 'token.message'])->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'user']);
     
-    // YOUR EXISTING TABLE CONTROLLER ROUTES (unchanged)
-    Route::get('/getAllStudents', [TableController::class, 'getAllStudents']);
-    Route::post('/students', [TableController::class, 'store']);
-    Route::get('/students/{id}', [TableController::class, 'show']);
-    Route::put('/students/{id}', [TableController::class, 'update']);
-    Route::delete('/students/{id}', [TableController::class, 'destroy']);
+    // STUDENT ROUTES - RESTful convention
+    // All authenticated users can view
+    Route::get('/students', [TableController::class, 'getAllStudents']);      // GET /students - list all
+    Route::get('/students/{id}', [TableController::class, 'show']);           // GET /students/1 - get one
+    
+    // Only admins can modify
+    Route::middleware(['role:admin'])->group(function () {
+        Route::post('/students', [TableController::class, 'store']);          // POST /students - create
+        Route::put('/students/{id}', [TableController::class, 'update']);     // PUT /students/1 - update
+        Route::delete('/students/{id}', [TableController::class, 'destroy']); // DELETE /students/1 - delete
+    });
 });
 
-Route::get('/user', [TableController::class, 'getAllStudents']);
-
-Route::apiResource('students', TableController::class);
+// Optional: If you want to keep the old endpoint for compatibility
+Route::get('/getAllStudents', [TableController::class, 'getAllStudents'])
+    ->middleware(['auth:sanctum', 'token.message']);

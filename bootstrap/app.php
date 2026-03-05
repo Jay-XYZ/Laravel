@@ -16,6 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'token.message' => \App\Http\Middleware\TokenMessageMiddleware::class,
+            'role' => \App\Http\Middleware\CheckRole::class,
+            'token.message' => \App\Http\Middleware\TokenMessageMiddleware::class,
         ]);
         
         // Add middleware to API groups
